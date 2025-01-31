@@ -22,7 +22,7 @@ type Memberships =
 
 type MembershipsProductsNames = 'FP200' | 'FP300' | 'FP500';
 
-type DigitalFranchises = 'FD200' | 'FD300' | 'FD500';
+type DigitalFranchises = 'FD150' | 'FD200' | 'FD300' | 'FD500';
 
 type Coins = 'BTC' | 'LTC' | 'MXN';
 

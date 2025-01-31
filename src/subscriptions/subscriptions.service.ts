@@ -70,6 +70,7 @@ export const MEMBERSHIP_PRICES_MONTHLY: Record<
   FP200: 200,
   FP300: 300,
   FP500: 500,
+  FD150: 150,
   FD200: 200,
   FD300: 300,
   FD500: 500,
@@ -140,6 +141,7 @@ export const MEMBERSHIP_CREDITS: Record<
   FP200: 0,
   FP300: 0,
   FP500: 0,
+  FD150: 0,
   FD200: 0,
   FD300: 0,
   FD500: 0,
@@ -183,6 +185,7 @@ export const MEMBERSHIP_CAP: Record<
   FP200: 500,
   FP300: 1000,
   FP500: 2000,
+  FD150: 450,
   FD200: 600,
   FD300: 1000,
   FD500: 2000,
@@ -207,6 +210,7 @@ export const FRANCHISE_FIRMS: Record<
   FP200: 2,
   FP300: 3,
   FP500: 5,
+  FD150: 1,
   FD200: 2,
   FD300: 3,
   FD500: 5,
@@ -1599,7 +1603,7 @@ export class SubscriptionsService {
      * Asignar posicion en el binario (SOLO USUARIOS NUEVOS)
      */
     const hasBinaryPosition = !!user.get('parent_binary_user_id'); //false
-    console.log(hasBinaryPosition);
+    console.log("Tiene binary position", hasBinaryPosition);
     if (!hasBinaryPosition) {
       const finish_position = user.get('position');
 

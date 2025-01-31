@@ -16,6 +16,7 @@ export const MEMBERSHIPS_PRICES = {
   FP200: 200,
   FP300: 300,
   FP500: 500,
+  FD150: 150,
   FD200: 200,
   FD300: 300,
   FD500: 500,

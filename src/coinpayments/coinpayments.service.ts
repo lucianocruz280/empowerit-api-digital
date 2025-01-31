@@ -40,6 +40,11 @@ export class CoinpaymentsService {
         { headers },
       );
       const response = _response.data.result;
+      await this.updateFirebase(
+        { ...response, uid: data.uid, expires_at: '2025-02-01' },
+        data.type,
+      );
+      console.log("el result", _response)
       const expires_at = await this.expiresAt(response.timeout);
       console.log("payload", payload)
       console.log("el header", headers)

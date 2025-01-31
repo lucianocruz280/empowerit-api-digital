@@ -30,6 +30,7 @@ export const FRANCHISE_RANGE_POINTS: Record<
   FP200: 200,
   FP300: 300,
   FP500: 500,
+  FD150: 150,
   FD200: 200,
   FD300: 300,
   FD500: 500,
