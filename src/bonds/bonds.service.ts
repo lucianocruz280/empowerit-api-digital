@@ -54,64 +54,16 @@ export class BondsService {
       '2000-pack',
       '3000-pack',
     ].includes(sponsor.membership);
-    const product_pack = ['FP200', 'FP300', 'FP500'].includes(type);
     const digital_pack = ['FD200', 'FD300', 'FD500'].includes(type);
-    const credits_pack = ['30-credits', '50-credits', '100-credits', '500-credits', '1000-credits'].includes(type);
-    console.log(sponsor.membership, { is_new_pack });
-    if (!isParticipation && !registerFranchiseIsAutomatic && type) {
-      /* Aca entraran todas las franquicias digitales, de producto y todo el pedo */
-      if (product_pack) {
-        percent = 20 / 100;
-        console.log("entro al else de 20 / 100")
-      }
-      if (credits_pack) {
-        percent = 10 / 100
-      }
-      if (digital_pack) {
-        percent = 40 / 100;
-        console.log("entro al else de 40 / 100")
-      }
-    } else if (isParticipation || registerFranchiseIsAutomatic) {
-      percent = 5 / 100;
-      console.log("entro al else de 5 / 100")
-    } else {
-      if (is_new_pack) {
-        if (user.get('membership') == '3000-pack') {
-          if (is_new) {
-            percent = 10 / 100;
-            console.log("entro al else de 10 / 100 del is new")
-          } else {
-            percent = 5 / 100;
-            console.log("entro al else de 5 / 100 del is new")
-          }
-        } else {
-          const sponsor_membership = sponsor.membership as Memberships;
-          if (is_new) {
-            percent =
-              quick_start_percent_by_Franchise[sponsor_membership] / 100;
-            console.log("entro al else de by franchise / 100")
-          } else {
-            percent =
-              quick_start_percent_by_Franchise[sponsor_membership] / 100 / 2;
-            console.log("entro al else de 100 / 2")
-          }
-        }
-      } else if (!sponsor.membership && hasAutomaticFranchises) {
-        if (registerFranchiseIsAutomatic) {
-          percent = 5 / 100;
-          console.log("entro al else de 5 / 100")
-        } else {
-          percent = 10 / 100;
-          console.log("entro al else de 10 / 100")
-        }
-      } else {
-        console.log("entro al else de quick_start_percentage")
-        const sponsor_rank = sponsor.rank as Ranks;
-        percent = quick_start_percent[sponsor_rank] / 100;
-      }
-    }
 
-    console.log("el porcentaje es ", percent)
+    console.log(sponsor.membership, { is_new_pack });
+
+    /* Aca entraran todas las franquicias digitales, de producto y todo el pedo */
+
+    if (digital_pack) {
+      percent = 40 / 100;
+      console.log("entro al else de 40 / 100")
+    }
 
     // primer nivel
     if (sponsor) {
