@@ -64,6 +64,7 @@ export class BondsService {
       percent = 40 / 100;
       console.log("entro al else de 40 / 100")
     }
+    
 
     // primer nivel
     if (sponsor) {
