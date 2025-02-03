@@ -29,6 +29,7 @@ async function bootstrap() {
   });
 
   const { httpAdapter } = app.get(HttpAdapterHost);
+  console.log("la apikey", process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),)
   //app.useGlobalFilters(new SentryFilter(httpAdapter));
 
   await app.listen(8080);

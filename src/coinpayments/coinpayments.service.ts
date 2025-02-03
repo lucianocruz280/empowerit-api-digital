@@ -12,9 +12,9 @@ import { CREDITS_PACKS_PRICE, FRANCHISES_AUTOMATIC_PRICES, MEMBERSHIP_PRICES_MON
 @Injectable()
 export class CoinpaymentsService {
   private readonly API_KEY_PUBLIC =
-    'd8703d70ec2abaeafe78c194b431180cee734d78ab1d8078daaca64788640df7';
+    '9ac2c74390c7ab21ef049e279b2a8aa1ed04467b7e605b2990e950e92f713bdf';
   private readonly API_KEY_PRIVATE =
-    '7DDa1f4fba796f4ce5Ab5394aF9b58B38212ba10C9893a134eda634Fc6729552';
+    'bba816575540252B18D357eA138eF4852901b1706A5B37b673070cb2Fef00667';
   private readonly URL_COINPAYMENTS = 'https://www.coinpayments.net/api.php';
   async createTransaction(data: CreateTransactionDto) {
     const amountBase = MEMBERSHIPS_PRICES[data.type];

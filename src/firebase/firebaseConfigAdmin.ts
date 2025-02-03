@@ -1,9 +1,5 @@
-import serviceAccountProd from './adminKeyProd.json';
-import serviceAccountDev from './adminKeyDev.json';
+import serviceAccountProd from './adminKey';
 
-const credentials =
-  process.env.CUSTOM_ENV == 'production'
-    ? serviceAccountProd
-    : serviceAccountDev;
+const credentials = serviceAccountProd
 
 export default credentials;
