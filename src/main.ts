@@ -31,7 +31,7 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
   console.log("la apikey", process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),)
   //app.useGlobalFilters(new SentryFilter(httpAdapter));
-  const PORT = process.env.PORT || 808
+  const PORT = process.env.PORT || 8080
   await app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
   });
