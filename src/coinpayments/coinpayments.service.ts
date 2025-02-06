@@ -141,10 +141,10 @@ export class CoinpaymentsService {
       response.status(400).send('pago no se pudo actualizar');
     }
   }
-  async confirmingPayment(email: string, status: number, txn_id: string) {
+  async confirmingPayment(email: string, status_string: number, txn_id: string) {
     const userPayment = await this.getUser(email);
     const updateRef = db.collection('users').doc(userPayment.id);
-
+    const status = Number(status_string)
     try {
       if (status === -1) return false;
 
@@ -161,8 +161,10 @@ export class CoinpaymentsService {
 
       for (const key of paymentKeys) {
         const paymentObject = userData[key];
+        console.log("el paymentObject es", paymentObject)
         if (paymentObject) {
           for (const membership in paymentObject) {
+            console.log("membership es", membership, "el txn_id es", paymentObject[membership]?.txn_id)
             if (paymentObject[membership]?.txn_id === txn_id) {
               console.log("el object to update is", paymentObject[membership])
               paymentObject[membership].status = this.getStatusFromCode(status);
@@ -193,6 +195,7 @@ export class CoinpaymentsService {
         }
 
         await updateRef.update(updatePayload);
+        console.log("status", status, status === 100)
         return status === 100;
       } else {
         console.warn('Transaction ID not found');

@@ -48,6 +48,13 @@ export const PARTICIPATIONS_BINARY_POINTS: Record<PackParticipations, number> =
   '3000-participation': 300,
 };
 
+export const MEMBERSHIP_DURATION: Record<DigitalFranchises, number> = {
+  FD150: 1,
+  FD200: 1,
+  FD300: 3,
+  FD500: 6
+}
+
 export const MEMBERSHIP_PRICES_MONTHLY: Record<
   Memberships | MembershipsProductsNames,
   number
@@ -900,14 +907,15 @@ export class SubscriptionsService {
     id_user: string,
     type: Franchises | MembershipsProductsNames | DigitalFranchises,
   ) {
+    const period = MEMBERSHIP_DURATION[type]
 
     // Obtener fechas
-    /*const startAt: Date = await this.calculateStartDate(id_user);
+    const startAt: Date = await this.calculateStartDate(id_user);
     const expiresAt: Date = await this.calculateExpirationDate(
       id_user,
       type,
       period,
-    );*/
+    );
 
     /* Aqui va la parte para ver cuantos creditos le tocan dependiendo la membresia */
 
@@ -920,12 +928,12 @@ export class SubscriptionsService {
           count_direct_people_this_cycle: 0,
           count_scholarship_people: 0,
           membership: type,
-          membership_started_at: new Date(),
+          membership_started_at: startAt,
           membership_status: 'paid',
-          //membership_expires_at: expiresAt,
+          membership_expires_at: expiresAt,
           payment_link: {},
           is_new: false,
-          credits: firestore.FieldValue.increment(MEMBERSHIP_CREDITS[type]),
+          // credits: firestore.FieldValue.increment(MEMBERSHIP_CREDITS[type]),
           membership_cap_limit: MEMBERSHIP_CAP[type],
           membership_cap_current: 0,
         });
@@ -969,23 +977,9 @@ export class SubscriptionsService {
   async calculateExpirationDate(
     id_user: string,
     type: Memberships,
-    period: 'monthly' | 'yearly',
+    period: 1 | 3 | 6,
   ): Promise<Date> {
-    let days = 0;
-
-    switch (type) {
-      case 'pro':
-      case 'supreme':
-        if (period == 'yearly') days = 365;
-        else days = 30;
-        break;
-      case 'business-pack':
-        days = 90;
-        break;
-      default:
-        days = 30;
-        break;
-    }
+    let days = period * 30;
 
     // Obtener la fecha de expiración
     const date: Date = dayjs(await this.calculateStartDate(id_user))
@@ -1339,7 +1333,7 @@ export class SubscriptionsService {
       try {
         await this.insertSanguineUsers(id_user);
       } catch (err) {
-        console.error(err);
+        console.error("fallo en el insertSanguineo", err);
         /*Sentry.configureScope((scope) => {
           scope.setExtra('id_user', id_user);
           scope.setExtra(
@@ -1431,11 +1425,11 @@ export class SubscriptionsService {
   }
 
   async addDigitalService(id: string, type: Memberships) {
-    if (type === 'FD200' || type === 'FD300' || type === 'FD500') {
+    if (type === 'FD150' || type === 'FD300' || type === 'FD500') {
       let newMrMoneyPowerDate: Date;
       let newMrSportMoneyDate: Date;
 
-      if (type === 'FD200') {
+      if (type === 'FD150') {
         newMrMoneyPowerDate = dayjs().add(30, 'day').toDate();
         newMrSportMoneyDate = dayjs().add(30, 'day').toDate();
       } else if (type === 'FD300') {

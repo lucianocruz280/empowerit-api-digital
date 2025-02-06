@@ -19,6 +19,7 @@ export class CoinpaymentsController {
   async notificationIpn(@Req() request: Request, @Res() response: Response) {
     const { isComplete, payload } =
       await this.coinPaymentsService.getNotificationIpn(request, response);
+      console.log("llego el complete", isComplete)
     if (isComplete) {
       const user = await this.coinPaymentsService.getUser(payload.email);
       try {
