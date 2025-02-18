@@ -9,10 +9,15 @@ export class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'Gmail',
+      host: 'smtp.office365.com',
+      port: 587,
+      secure: false,
       auth: {
-        user: 'verify.topx@gmail.com',
-        pass: 'rrizuyikklljfxcc',
+        user: 'bienvenida@impactnow.world',
+        pass: 'Impactnow.@',
+      },
+      tls: {
+        ciphers: 'SSLv3',
       },
     });
   }
@@ -57,8 +62,7 @@ export class EmailService {
                             <div>
                               <div style="line-height: 43px;">
                                 <span style="font-family: Helvetica, sans-serif; font-weight: bold; font-size: 36px; color: #040404;"><span style="text-decoration: none;">¡Felicidades!<br></span><span style="font-size: 20px; text-decoration: none;">
-                                ${user.get('name')}
-                                <br>Queremos darte la bienvenida a EMPOWERIT TOP.</span></span>
+                                ${user.get('name')}</span></span>
                               </div>
                             </div>
                           </td></tr>
@@ -78,9 +82,11 @@ export class EmailService {
                           <tr><td align="center">
                             <div>
                               <div style="line-height: 20px;">
-                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229;">Acabas de convertirte en parte de una compañía que llegó para marcar historia y te comentamos que estamos aquí para apoyarte y guiarte mientras haces tus sueños realidad. <br><br></span>
-                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229;">Sabemos que estarás orgulloso de vivir la #TopLife 🤝 <br><br></span>
-                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229;">¿El objetivo? Ayudarte a que aproveches esta gran oportunidad que se pone en tus manos donde eres PIONERO, tienes todo listo para convertirte en leyenda en esta maravillosa industria. <br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229;">Hoy marcas el inicio de un nuevo capítulo en tu vida. Has tomado una decisión que puede cambiarlo todo. NOW es más que una oportunidad: es una compañia, es un movimiento, una mentalidad, una nueva forma de vivir.<br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229;">Aquí encontrarás conocimiento, liderazgo, comunidad y las herramientas para construir la vida que siempre soñaste.  <br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229;">No estás solo. Estás rodeado de personas que piensan en grande, que actúan en grande y que van a lo más alto.<br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229; font-weight: bold;">AHORA es tu momento. 🌎🔥<br><br></span>
+                               
                               </div> 
                               <div style="height: 16px; line-height: 16px; font-size: 14px;">&nbsp;</div>
                             </div>
@@ -97,7 +103,7 @@ export class EmailService {
                                   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
                                   <tr><td align="undefined" valign="top" class="outf14" style="font-size: large;">
                                     <div>
-                                      <a href="#" target="_blank" style="font-family: Arial, sans-serif; font-size: 14px; color: #000000;"><img src="https://backoffice.empowerittop.com/img/email/i-1601923783.png" width="300" alt="" border="0" style="display: block; border-radius: 0px; max-width: 300px; width: 100%;" class="w300px"></a>
+                                      <a href="#" target="_blank" style="font-family: Arial, sans-serif; font-size: 14px; color: #000000;"><img src="https://firebasestorage.googleapis.com/v0/b/empowerit-top-digital.firebasestorage.app/o/now-logo-3.png?alt=media&token=f31b960b-8a82-4a43-a51d-374fffca55d1" width="300" alt="" border="0" style="display: block; border-radius: 0px; max-width: 300px; width: 100%;" class="w300px"></a>
                                     </div>
                                   </td></tr>
                                   </table>
@@ -118,7 +124,12 @@ export class EmailService {
                                             <tr><td align="center" valign="middle" height="181" style="padding: 0px 20px; height: 181px;">
                                               <div>
                                                 <div style="line-height: 20px;">
-                                                  <span style="font-family: Helvetica, sans-serif; font-weight: bold; font-size: 18px; color: #1a2229;"><span style="text-decoration: none;">EL MUNDO YA CAMBIÓ Y LA MANERA DE HACER DINERO TAMBIÉN BIENVENIDO A LA COMPAÑÍA QUE SE ESTA CONVIRTIENDO EN LA MAS GRANDE DEL MUNDO.<br><br></span><span style="font-weight: normal; font-size: 14px; text-decoration: none;">Saúl Zavala, Ricardo Zaizar y Jorge López<br>Fundadores y Ceo’s de Empowerit TOP</span></span>
+                                                 <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229; font-weight: bold;">🚀 ¿Cuál es el siguiente paso?<br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229; ">🔹 Ingresa a tu plataforma: <a href="https://impactnow.world" target="_blank">IMPACT NOW</a><br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229; ">🔹 Conéctate con la comunidad NOW<br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229; ">🔹 Sigue a nuestro CEO en instagram: Saulzavalamx<br><br></span>
+                                <span style="font-family: Inter, sans-serif; font-size: 14px; color: #1a2229; ">🔹 Comienza tu camino hacia la grandeza<br><br></span>
+                                  
                                                 </div>
                                               </div>
                                             </td></tr>
@@ -152,7 +163,7 @@ export class EmailService {
                           <tr><td align="center" valign="top" style="padding: 0px 0px 10px;">
                             <div>
                               <div style="line-height: 14px;">
-                                <span style="font-family: Inter, sans-serif; font-size: 12px; color: #b9b9b9;">Este correo es de uso administrativo <br>© 2024 EMPOWERITTOP todos los derechos reservados</span>
+                                <span style="font-family: Inter, sans-serif; font-size: 12px; color: #b9b9b9;">Este correo es de uso administrativo <br>© 2025 IMPACT NOW todos los derechos reservados</span>
                               </div>
                             </div>
                           </td></tr>
@@ -183,11 +194,10 @@ export class EmailService {
       </div> 
     `;
     const mailOptions = {
-      from: 'empowerittop@gmail.com',
+      from: 'bienvenida@impactnow.world',
       to: user.get('email'),
-      subject: 'Bienvenido a la familia EMPOWERIT TOP',
-      text:
-        'Bienvenido a la familia EMPOWERIT TOP ¡¡' + user.get('name') + '!!',
+      subject: 'Bienvenido a la familia IMPACT NOW',
+      text: 'Bienvenido a la familia IMPACT NOW ¡¡' + user.get('name') + '!!',
       html: template,
     };
 
