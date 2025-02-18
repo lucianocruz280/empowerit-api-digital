@@ -77,6 +77,7 @@ export class SubscriptionsController {
       throw new Error(err);
     }
   }
+  
 
   @Post('createPaymentAddress/:type')
   async createPaymentAddressPro(
