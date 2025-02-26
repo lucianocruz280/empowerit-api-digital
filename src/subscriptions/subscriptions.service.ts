@@ -832,13 +832,14 @@ export class SubscriptionsService {
     id_user: string,
     type: Franchises | Memberships,
   ) {
+    const period = MEMBERSHIP_DURATION[type]
     // Obtener fechas
-    /*const startAt: Date = await this.calculateStartDate(id_user);
+    // const startAt: Date = await this.calculateStartDate(id_user);
     const expiresAt: Date = await this.calculateExpirationDate(
       id_user,
       type,
       period,
-    );*/
+    );
 
     /* Aqui va la parte para ver cuantos creditos le tocan dependiendo la membresia */
 
@@ -849,7 +850,7 @@ export class SubscriptionsService {
       membership: type,
       membership_started_at: new Date(),
       membership_status: 'paid',
-      //membership_expires_at: expiresAt,
+      membership_expires_at: expiresAt,
       payment_link: {},
       is_new: false,
       credits: 0,
@@ -1314,10 +1315,7 @@ export class SubscriptionsService {
 
     await this.addDigitalService(id_user, type)
 
-    if (isNew) {
-      await this.emailService.sendEmailNewUser(id_user);
-    }
-    console.log('despues de mandar el email si es un usuario nuevo');
+  
 
     if (isNew) {
       await userDocRef.update({
@@ -1422,6 +1420,11 @@ export class SubscriptionsService {
       currency: currency || null,
     });
     console.log('despues del a;adir a memberships-history');
+
+    if (isNew) {
+      await this.emailService.sendEmailNewUser(id_user);
+    }
+    console.log('despues de mandar el email si es un usuario nuevo');
   }
 
   async addDigitalService(id: string, type: Memberships) {
@@ -1520,14 +1523,15 @@ export class SubscriptionsService {
           merge: true,
         },
       );
-
+      console.log("paso el set");
     //Busca en todos los usuarios los que tengan el sponsor_id en la subcoleecion de sanguine_users
     const sanguine_sponsors = await admin
       .collectionGroup('sanguine_users')
       .where('id_user', '==', current_user.sponsor_id)
       .get();
-
+      console.log("condicion");
     for (const sponsorSanguineRef of sanguine_sponsors.docs) {
+      console.log("dentro del for", sponsorSanguineRef);
       const userId = sponsorSanguineRef.ref.parent.parent.id;
       await admin
         .collection('users')

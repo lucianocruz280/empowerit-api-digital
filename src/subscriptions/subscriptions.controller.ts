@@ -77,7 +77,7 @@ export class SubscriptionsController {
       throw new Error(err);
     }
   }
-  
+
 
   @Post('createPaymentAddress/:type')
   async createPaymentAddressPro(
@@ -164,8 +164,8 @@ export class SubscriptionsController {
 
     console.log(body);
 
-    if (body.membership != '49-pack' && !MEMBERSHIP_CAP[body.membership])
-      throw new Error('el type esta mal: ' + body.membership);
+    // if (body.membership != '49-pack' && !MEMBERSHIP_CAP[body.membership])
+    //   throw new Error('el type esta mal: ' + body.membership);
 
     await db
       .collection('users')
@@ -173,7 +173,7 @@ export class SubscriptionsController {
       .update({
         count_direct_people: firestore.FieldValue.increment(1),
       });
-
+      console.log("paso increment");
     const res = await db
       .collection('users')
       .where('email', '==', body.email)
@@ -185,7 +185,7 @@ export class SubscriptionsController {
         password: body.password || '123987xd',
       });
       user_id = user.uid;
-
+      console.log("se creo el usuario");
       await db
         .collection('users')
         .doc(user.uid)
@@ -215,10 +215,10 @@ export class SubscriptionsController {
       user_id,
       body.membership,
     );
-
+    console.log("se asigno la membresia");
     if (!user.get('parent_binary_user_id')) {
       await this.subscriptionService.insertSanguineUsers(user_id);
-
+      console.log("sanguinea");
       await this.subscriptionService.assignBinaryPosition(
         {
           id_user: user_id,
@@ -229,6 +229,7 @@ export class SubscriptionsController {
         false,
       );
     }
+    console.log("posicion binaria");
     const sponsorRef = await db.collection('users').doc(body.sponsor_id).get();
     const sponsorName = await sponsorRef.get('name');
     const userNew = await db.collection('users').doc(user_id).get();
