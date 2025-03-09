@@ -1493,6 +1493,13 @@ export class SubscriptionsService {
     );
   }
 
+  async execInvestmentBond (id_user:string, type: Memberships) {
+    const value_investment = (MEMBERSHIP_PRICES_MONTHLY[type] * 15) / 100
+    await admin.collection('users').doc(id_user).set({
+      bond_investment: firestore.FieldValue.increment(value_investment || 45)
+    })
+  }
+
   async insertSanguineUsers(id_user: string) {
     //Se trae la referencia del usuario
     const userRef = await admin.collection('users').doc(id_user).get();
