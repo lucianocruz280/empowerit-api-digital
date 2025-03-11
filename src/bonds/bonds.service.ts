@@ -46,6 +46,7 @@ export class BondsService {
     const hasAutomaticFranchises = sponsor?.has_automatic_franchises ?? false;
     console.log(is_new ? 'El usuario es nuevo' : 'El usuario no es nuevo');
     let percent = 0;
+    let investment_percent = 0
     const is_new_pack = [
       '100-pack',
       '300-pack',
@@ -62,6 +63,7 @@ export class BondsService {
 
     if (digital_pack) {
       percent = 40 / 100;
+      investment_percent = 15 / 100
       console.log("entro al else de 40 / 100")
     }
 
@@ -69,7 +71,8 @@ export class BondsService {
     if (sponsor) {
       const isProActive = await this.userService.isActiveUser(sponsor_id);
       const amount = Math.round(membership_price * percent * 100) / 100;
-      let availableAmount = amount;
+      const amount_investment = amount * investment_percent
+      let availableAmount = amount - amount_investment;
 
       if (is_new_pack) {
         availableAmount = await availableCap(sponsor_id, amount);
@@ -81,13 +84,17 @@ export class BondsService {
           await sponsorRef.update({
             [Bonds.QUICK_START]:
               firestore.FieldValue.increment(availableAmount),
-            /* membership_cap_current:
-              firestore.FieldValue.increment(availableAmount), */
+            membership_cap_current:
+              firestore.FieldValue.increment(availableAmount),
+            [Bonds.INVESTMENT]:
+              firestore.FieldValue.increment(amount_investment)
           });
         } else {
           await sponsorRef.update({
             [Bonds.QUICK_START]:
               firestore.FieldValue.increment(availableAmount),
+            [Bonds.INVESTMENT]:
+              firestore.FieldValue.increment(amount_investment)
           });
         }
         await this.addProfitDetail(
@@ -96,6 +103,12 @@ export class BondsService {
           availableAmount,
           user.id,
         );
+        await this.addProfitDetail(
+          sponsorRef.id,
+          Bonds.INVESTMENT,
+          availableAmount,
+          user.id
+        )
       } else {
         await this.addLostProfit(
           sponsorRef.id,

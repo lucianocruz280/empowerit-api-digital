@@ -7,7 +7,7 @@ import { db } from 'src/firebase/admin';
 
 @Controller('binary')
 export class BinaryController {
-  constructor(private readonly binaryService: BinaryService) {}
+  constructor(private readonly binaryService: BinaryService) { }
 
   @Post('/match-points')
   async matchPoints(@Body() body: { userId: string }) {
@@ -25,13 +25,13 @@ export class BinaryController {
     );
   }
 
-  /* @Post('fixBinaryPoints')
-  async fixBinaryPoints(){
+  @Post('fixBinaryPoints')
+  async fixBinaryPoints() {
     return this.binaryService.fixBinaryPoints()
-  } */
+  }
 
-  /*
-  volver a subir left-points y right-points
+
+  // volver a subir left-points y right-points
 
   @Post('/fixPoints')
   async fixPoints() {
@@ -58,7 +58,7 @@ export class BinaryController {
         });
       }
     }
-  }*/
+  }
 
   /* @Post('fixBinaryPointsById')
   async fixBinaryPointsById() {

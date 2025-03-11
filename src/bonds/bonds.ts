@@ -7,6 +7,7 @@ export enum Bonds {
   MENTOR = 'bond_mentor',
   CAR = 'bond_car',
   DIRECT_SALE = 'bond_direct_sale',
+  INVESTMENT = 'bond_investment'
 }
 
 /**
@@ -81,6 +82,7 @@ export const messages: Record<Bonds, string> = {
   bond_car: 'Bono Auto',
   bond_direct_sale: 'Bono venta directa',
   bond_presenter: 'Bono presentador',
+  bond_investment: 'Bono de inversión'
 };
 
 export const getMentorPercent = (id_user: string, membership: Franchises) => {
