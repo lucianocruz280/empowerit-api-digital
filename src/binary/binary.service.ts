@@ -138,7 +138,7 @@ export class BinaryService {
     const userNew = (await getDoc(doc(db, 'users', registerUserId))).data()
     const batch = writeBatch(db);
 
-    console.log('Repartir', points, 'puntos');
+    console.log('Repartir', points, 'puntos', registerUserId);
 
     const registerUser = await admin
       .collection('users')
@@ -147,7 +147,7 @@ export class BinaryService {
 
     const membership = registerUser.get('membership');
     let currentUser = registerUserId;
-
+    console.log("antes del incremento de puntos")
     do {
       const users = await getDocs(
         query(
@@ -158,9 +158,9 @@ export class BinaryService {
           ),
         ),
       );
-      console.log('pasa');
+      console.log('pasa el incremento');
       if (users.size > 0) {
-        console.log('pasa');
+        console.log('pasa en el size');
         const user = users.docs[0];
         const userData = user.data();
         const position =
@@ -188,7 +188,7 @@ export class BinaryService {
           const subCollectionPointsRef = doc(
             collection(db, `users/${user.id}/points`),
           );
-
+          console.log("referencias", subCollectionRef, subCollectionPointsRef)
           /**
            * add (left | right) points
            */
