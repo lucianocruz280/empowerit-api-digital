@@ -33,3 +33,4 @@ export const MEMBERSHIPS_PRICES = {
   '500-credits': 500,
   '1000-credits': 1000
 };
+
