@@ -154,7 +154,7 @@ export class BinaryService {
           ),
         ),
       );
-      console.log('pasa el incremento', users.docs, currentUser);
+      console.log('pasa el incremento', currentUser);
       if (users.size > 0) {
         console.log('pasa en el size');
         const user = users.docs[0];
