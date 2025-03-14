@@ -134,7 +134,7 @@ export class AdminService {
         .doc(doc.id)
         .update({
           profits: doc.profits + doc.total,
-          bond_direct: 0,
+          bond_quick_start: 0,
           bond_investment: 0,
         });
     }
