@@ -42,7 +42,7 @@ export const PARTICIPATION_RANGE_POINTS: Record<PackParticipations, number> = {
 
 @Injectable()
 export class BinaryService {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UsersService) { }
 
   async calculatePositionOfBinary(
     sponsor_id: string,
@@ -93,15 +93,11 @@ export class BinaryService {
         console.log(currentUser);
         const countUnderlinePeople = user.get('count_underline_people');
 
-        if (countUnderlinePeople) {
-          batch.update(user.ref, {
-            count_underline_people: firestore.FieldValue.increment(1),
-          });
-        } else {
-          batch.update(user.ref, {
-            count_underline_people: 1,
-          });
-        }
+
+        batch.update(user.ref, {
+          count_underline_people: firestore.FieldValue.increment(1),
+        });
+
 
         batch.set(
           admin
