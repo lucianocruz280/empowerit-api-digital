@@ -7,12 +7,12 @@ export class AdminController {
 
   @Get('/payroll')
   getpayroll(@Query('blockchain') blockchain: 'bitcoin' | 'litecoin') {
-    return this.adminService.getPayroll(blockchain);
+    return this.adminService.getPayroll();
   }
 
   @Post('/payroll')
   payroll(@Query('blockchain') blockchain: Blockchains) {
-    return this.adminService.payroll(blockchain);
+    return this.adminService.payroll();
   }
 
   @Post('/payroll/:payrollid')

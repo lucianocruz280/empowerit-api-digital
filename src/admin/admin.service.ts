@@ -34,140 +34,38 @@ export class AdminService {
     private readonly binaryService: BinaryService,
   ) { }
 
-  async getPayroll(blockchain: Blockchains) {
+  async getPayroll() {
     const users = await db.collection('users').get();
     const docs = users.docs.map((r) => ({ id: r.id, ...r.data() }));
 
-    let payroll_data = docs
+    const payroll_data = docs
       .map((docData: any) => {
-        const hasInfinitePoints = INFINITE_POINTS.includes(docData.id);
-
-        const binary_side = hasInfinitePoints
-          ? 'right'
-          : docData.left_points > docData.right_points
-            ? 'right'
-            : 'left';
-        const binary_points = docData[`${binary_side}_points`];
-
-        let binary_percent = 0;
-        let mentor_percent = 0;
-        if (
-          [
-            'pro',
-            'supreme',
-            'alive-pack',
-            'business-pack',
-            'freedom-pack',
-            'vip-pack',
-            'elite-pack',
-          ].includes(docData.membership)
-        ) {
-          binary_percent = getBinaryPercent(docData.id, docData.membership);
-          mentor_percent = getMentorPercentByRank(docData.id, docData.rank);
-        } else {
-          binary_percent = getBinaryPercent(docData.id, docData.membership);
-          mentor_percent = getMentorPercent(docData.id, docData.membership);
-        }
+        // agregar matching bonus
 
         const res = {
           id: docData.id,
           name: docData.name,
-          bond_quick_start: docData.bond_quick_start || 0,
-          bond_direct_sale: docData.bond_direct_sale || 0,
-          bond_founder: docData.bond_founder || 0,
-          bond_mentor: 0,
-          bond_mentor_percent: mentor_percent,
-          bond_presenter: docData.bond_presenter || 0,
-          bond_car: docData.bond_car || 0,
-          bond_binary: Math.floor(binary_points * binary_percent * 100) / 100,
-          binary_percent,
-          binary_side,
-          binary_points,
-          left_points: docData.left_points,
-          right_points: docData.right_points,
-          wallet_litecoin: docData.wallet_litecoin || '',
+          bond_direct: docData.bond_quick_start || 0,
+          bond_investment: docData.bond_investment || 0,
+          wallet_usdt: docData.wallet_usdt || '',
           profits: docData.profits || 0,
-          rank: docData.rank || 'none',
           sponsor_id: docData.sponsor_id || '',
-          profits_this_month: docData.profits_this_month || 0,
         };
 
         return res;
       })
-      .map((doc, index, arr) => ({
-        ...doc,
-        bond_mentor: arr.reduce(
-          (a, b) =>
-            a +
-            (b.sponsor_id == doc.id
-              ? (b.bond_binary || 0) * doc.bond_mentor_percent
-              : 0),
-          0,
-        ),
-      }))
       .map((doc) => ({
         ...doc,
-        subtotal:
-          doc.bond_quick_start +
-          doc.bond_founder +
-          doc.bond_direct_sale +
-          doc.bond_mentor +
-          doc.bond_presenter +
-          doc.bond_binary,
-      }))
-      .map((doc) => ({
-        ...doc,
-        fee: Math.ceil(doc.subtotal * 0.05 * 100) / 100,
-      }))
-      .map((doc) => ({
-        ...doc,
-        total: doc.subtotal - doc.fee,
+        total: doc.bond_direct + doc.bond_investment,
       }))
       .filter((doc) => doc.total > 0)
-      // sort desc
-      .sort((a, b) => b.total - a.total);
-
-    /**
-     * Restar bono mentor de las personas que no cobran (<40usd)
-     */
-    payroll_data = payroll_data
-      .map((doc, index, arr) => ({
-        ...doc,
-        bond_mentor:
-          doc.bond_mentor -
-          arr
-            .filter((r) => r.sponsor_id == doc.id)
-            .filter((r) => r.total < 40 || !r.wallet_litecoin)
-            .reduce((a, b) => a + b.bond_binary * doc.bond_mentor_percent, 0),
-      }))
-      .map((doc) => ({
-        ...doc,
-        subtotal:
-          doc.bond_quick_start +
-          doc.bond_founder +
-          doc.bond_direct_sale +
-          doc.bond_mentor +
-          doc.bond_presenter +
-          doc.bond_binary,
-      }))
-      .map((doc) => ({
-        ...doc,
-        fee: Math.ceil(doc.subtotal * 0.05 * 100) / 100,
-      }))
-      .map((doc) => ({
-        ...doc,
-        total: doc.subtotal - doc.fee,
-      }))
       // sort desc
       .sort((a, b) => b.total - a.total);
 
     const payroll_data_2 = await Promise.all(
       payroll_data.map(async (doc) => ({
         ...doc,
-        crypto_amount:
-          blockchain == 'litecoin'
-            ? await this.cryptoapisService.getLTCExchange(doc.total)
-            : 0,
+        crypto_amount: doc.total,
       })),
     );
 
@@ -209,18 +107,15 @@ export class AdminService {
     return clean_data;
   }
 
-  async payroll(blockchain: Blockchains) {
-    const payroll_data = await this.getPayroll(blockchain);
+  async payroll() {
+    const payroll_data = await this.getPayroll();
 
-    const clean_payroll_data = await this.payrollCapCurrent(
-      payroll_data
-        .filter((doc) => doc.total >= 40)
-        .filter((doc) => Boolean(doc.wallet_litecoin)),
-    );
+    const clean_payroll_data = payroll_data
+      .filter((doc) => doc.total >= 40)
+      .filter((doc) => Boolean(doc.wallet_usdt));
 
     const ref = await db.collection('payroll').add({
       total_usd: clean_payroll_data.reduce((a, b) => a + b.total, 0),
-      total_btc: clean_payroll_data.reduce((a, b) => a + b.crypto_amount, 0),
       created_at: new Date(),
     });
     await Promise.all(
@@ -230,44 +125,21 @@ export class AdminService {
           ...doc,
           created_at: new Date(),
         });
-        if (doc.binary_points > 0) {
-          await this.binaryService.matchBinaryPoints(doc.id);
-        }
       }),
     );
 
-    /**
-     * resear todos los bonos a cero
-     */
     for (const doc of clean_payroll_data) {
       await db
         .collection('users')
         .doc(doc.id)
         .update({
           profits: doc.profits + doc.total,
-          bond_quick_start: 0,
-          bond_founder: 0,
-          bond_direct_sale: 0,
-          bond_mentor: 0,
-          bond_presenter: 0,
-          profits_this_month: doc.profits_this_month + doc.total,
-          membership_cap_current: firestore.FieldValue.increment(doc.total),
+          bond_direct: 0,
+          bond_investment: 0,
         });
     }
 
-    if (['bitcoin', 'litecoin'].includes(blockchain)) {
-      const wallet =
-        blockchain == 'bitcoin' ? 'wallet_bitcoin' : 'wallet_litecoin';
-      const requests = clean_payroll_data.map((doc) => ({
-        address: doc[wallet],
-        amount: `${doc.crypto_amount}`,
-      }));
-      const requests_empty = requests.filter((r) => r.address);
-      await this.cryptoapisService.sendRequestTransaction(
-        requests_empty,
-        blockchain as 'bitcoin' | 'litecoin',
-      );
-    }
+    /** TODO: sendRequestTransaction */
 
     return clean_payroll_data;
   }
