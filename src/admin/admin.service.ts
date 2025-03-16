@@ -37,19 +37,34 @@ export class AdminService {
   async getPayroll() {
     const users = await db.collection('users').get();
     const docs = users.docs.map((r) => ({ id: r.id, ...r.data() }));
-
+    let binary_percent = 0;
     const payroll_data = docs
       .map((docData: any) => {
         // agregar matching bonus
-
+        const hasInfinitePoints = INFINITE_POINTS.includes(docData.id);
+        const binary_side = hasInfinitePoints
+          ? 'right'
+          : docData.left_points > docData.right_points
+            ? 'right'
+            : 'left';
+        const binary_points = docData[`${binary_side}_points`];
+        binary_percent = getBinaryPercent(docData.id, docData.membership);
         const res = {
           id: docData.id,
           name: docData.name,
           bond_direct: docData.bond_quick_start || 0,
           bond_investment: docData.bond_investment || 0,
+          bond_binary: Math.floor(binary_points * binary_percent * 100) / 100,
           wallet_usdt: docData.wallet_usdt || '',
           profits: docData.profits || 0,
           sponsor_id: docData.sponsor_id || '',
+          binary_percent,
+          binary_side,
+          binary_points,
+          left_points: docData.left_points,
+          right_points: docData.right_points,
+          profits_this_month: docData.profits_this_month || 0,
+          rank: docData.rank || 'none',
         };
 
         return res;
@@ -115,6 +130,7 @@ export class AdminService {
       .filter((doc) => Boolean(doc.wallet_usdt));
 
     const ref = await db.collection('payroll').add({
+      ...clean_payroll_data,
       total_usd: clean_payroll_data.reduce((a, b) => a + b.total, 0),
       created_at: new Date(),
     });

@@ -106,7 +106,7 @@ export class BondsService {
         await this.addProfitDetail(
           sponsorRef.id,
           Bonds.INVESTMENT,
-          availableAmount,
+          amount_investment,
           user.id
         )
       } else {
