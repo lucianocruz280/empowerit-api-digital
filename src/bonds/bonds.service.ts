@@ -55,7 +55,7 @@ export class BondsService {
       '2000-pack',
       '3000-pack',
     ].includes(sponsor.membership);
-    const digital_pack = ['FD200', 'FD300', 'FD500'].includes(type);
+    const digital_pack = ['FD150', 'FD300', 'FD500'].includes(type);
 
     console.log(sponsor.membership, { is_new_pack });
 
