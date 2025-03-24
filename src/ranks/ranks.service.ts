@@ -415,7 +415,7 @@ export class RanksService {
 
     /* Obtener la suma de puntos del ultimo mes */
     const points = await this.getPoints(userId, start, end);
-    console.log("points", points)
+    console.log("points", userId, points)
     /* Crear subcoleccion para el historial de rangos */
     const smaller_leg = points.right > points.left ? 'left' : 'right';
     const points_smaller_leg = points[smaller_leg];
