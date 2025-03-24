@@ -628,10 +628,12 @@ export class RanksService {
     const user = await admin.collection('users').doc(id_user).get();
     const current = ranks_object[rank_key];
     const next_rank = ranks_object[ranksOrder[current.order + 1]];
+    const binary_percent = getBinaryPercent(user.id, user.get('membership'))
+    console.log("binary percent", binary_percent)
     return {
       ...current,
       next_rank,
-      binary_percent: getBinaryPercent(user.id, user.get('membership')),
+      binary_percent,
       mentor_percent: getMentorPercent(user.id, user.get('membership')),
     };
   }
