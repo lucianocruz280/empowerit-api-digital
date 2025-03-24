@@ -358,7 +358,7 @@ export class RanksService {
   async updateUserRank(id_user: string) {
     const user = await admin.collection('users').doc(id_user).get();
     const rankData = await this.getRankUser(id_user);
-
+    console.log("[pasa por aqui", rankData)
     const start = dayjs().add(-1, 'day').utcOffset(-6).startOf('month');
     const end = dayjs().add(-1, 'day').utcOffset(-6).endOf('month');
 
@@ -415,12 +415,12 @@ export class RanksService {
 
     /* Obtener la suma de puntos del ultimo mes */
     const points = await this.getPoints(userId, start, end);
-
+    console.log("points", points)
     /* Crear subcoleccion para el historial de rangos */
     const smaller_leg = points.right > points.left ? 'left' : 'right';
     const points_smaller_leg = points[smaller_leg];
     const rank = await this.getRank(userId, points_smaller_leg);
-
+    console.log("el rango es en getRankUser", rank)
     return {
       order: rank.order,
       rank: rank.rank,
@@ -471,7 +471,7 @@ export class RanksService {
     let rank: Ranks = Ranks.NONE;
     let next_rank: Ranks = Ranks.NONE;
     let missing_points = 0;
-
+    console.log("puntos pierna mas corta", points_smaller_leg)
     const hasRankBothSides = async (rank: Ranks): Promise<boolean> => {
       return (
         (await this.getUserRankBySide(userId, rank, 'left')) &&

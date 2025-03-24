@@ -48,7 +48,9 @@ export class AdminService {
             ? 'right'
             : 'left';
         const binary_points = docData[`${binary_side}_points`];
+        console.log("los puntos son", binary_points)
         binary_percent = getBinaryPercent(docData.id, docData.membership);
+        console.log("el porcentaje es", binary_percent)
         const res = {
           id: docData.id,
           name: docData.name,
