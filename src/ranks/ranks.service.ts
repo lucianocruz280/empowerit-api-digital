@@ -408,6 +408,7 @@ export class RanksService {
     }
 
     const amount = ranks_object[rankData.rank as Memberships].bond;
+    console.log("inicio del binario", amount, rankData)
     await this.bondService.execUserBinaryBond(id_user, amount);
 
     return rankData;
