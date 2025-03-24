@@ -47,71 +47,84 @@ export const ranksOrder = [
 
 export const ranks_object: Record<
   Ranks,
-  { display: string; key: Ranks; order: number }
+  { display: string; key: Ranks; order: number, bond: number }
 > = {
   [Ranks.NONE]: {
     display: 'Ninguno',
     key: Ranks.NONE,
     order: -1,
+    bond: 0
   },
   [Ranks.INITIAL_BUILD]: {
     display: 'Initial Builder',
     key: Ranks.INITIAL_BUILD,
     order: 0,
+    bond:500
   },
   [Ranks.STAR_BUILD]: {
     display: 'Star Builder',
     key: Ranks.STAR_BUILD,
     order: 1,
+    bond: 1500
   },
   [Ranks.ADVANCED_BUILDER]: {
     display: 'Advanced Builder',
     key: Ranks.ADVANCED_BUILDER,
     order: 2,
+    bond: 6000
   },
   [Ranks.MASTER_1000]: {
     display: 'Master 1000',
     key: Ranks.MASTER_1000,
     order: 3,
+    bond: 8000
   },
   [Ranks.MASTER_1500]: {
     display: 'Master 1500',
     key: Ranks.MASTER_1500,
     order: 4,
+    bond: 12000
   },
   [Ranks.MASTER_2500]: {
     display: 'Master 2500',
     key: Ranks.MASTER_2500,
     order: 5,
+    bond: 15000
   },
   [Ranks.REGIONAL_DIRECTOR]: {
     display: 'Regional Director',
     key: Ranks.REGIONAL_DIRECTOR,
     order: 6,
+    bond: 25000
   },
   [Ranks.NATIONAL_DIRECTOR]: {
     display: 'National Director',
     key: Ranks.NATIONAL_DIRECTOR,
     order: 7,
+    bond: 35000
   },
   [Ranks.INTERNATIONAL_DIRECTOR]: {
     display: 'International Director',
     key: Ranks.INTERNATIONAL_DIRECTOR,
     order: 8,
+    bond: 72000
   },
   [Ranks.TOP_DIAMOND]: {
     display: 'Top Diamond',
     key: Ranks.TOP_DIAMOND,
     order: 9,
+    bond: 180000
   },
   [Ranks.TOP_1]: {
     display: 'Top 1%',
     key: Ranks.TOP_1,
     order: 10,
+    bond: 600000
   },
   [Ranks.TOP_LEGEND]: {
     display: 'Top Legend',
     key: Ranks.TOP_LEGEND,
     order: 11,
+    bond: 2300000
   },
 };
