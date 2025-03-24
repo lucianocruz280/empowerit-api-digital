@@ -6,6 +6,7 @@ import { GoogletaskService } from '../googletask/googletask.service';
 import { google } from '@google-cloud/tasks/build/protos/protos';
 import { getBinaryPercent } from '../binary/binary_packs';
 import { getMentorPercent } from '../bonds/bonds';
+import { BondsService } from 'src/bonds/bonds.service';
 
 type UserRank = {
   rank?: Ranks;
@@ -14,7 +15,7 @@ type UserRank = {
 
 @Injectable()
 export class RanksService {
-  constructor(private readonly googleTaskService: GoogletaskService) {}
+  constructor(private readonly googleTaskService: GoogletaskService, private readonly bondService: BondsService) { }
 
   async updateNewRanks() {
     try {
@@ -406,6 +407,9 @@ export class RanksService {
       }
     }
 
+    const amount = ranks_object[rankData.rank as Memberships].bond;
+    await this.bondService.execUserBinaryBond(id_user, amount);
+
     return rankData;
   }
 
@@ -445,9 +449,9 @@ export class RanksService {
 
     const sumSidePoints =
       (side: 'left' | 'right') =>
-      (a: number, b: { side: 'left' | 'right'; points: number }): number => {
-        return a + (b.side == side ? b.points : 0);
-      };
+        (a: number, b: { side: 'left' | 'right'; points: number }): number => {
+          return a + (b.side == side ? b.points : 0);
+        };
 
     const left_points = points.reduce(sumSidePoints('left'), 0);
     const right_points = points.reduce(sumSidePoints('right'), 0);
@@ -689,18 +693,18 @@ export class RanksService {
     return returnType == 'json'
       ? response
       : [
-          'ID,NOMBRE,EMAIL,PATROCINADOR,PATROCINADOR EMAIL,RANGO PASADO,NUEVO RANGO',
-          ...response.map((r) =>
-            [
-              r.id,
-              r.name,
-              r.email,
-              r.sponsor,
-              r.sponsor_email,
-              r.past_rank,
-              r.new_rank,
-            ].join(','),
-          ),
-        ].join('\n');
+        'ID,NOMBRE,EMAIL,PATROCINADOR,PATROCINADOR EMAIL,RANGO PASADO,NUEVO RANGO',
+        ...response.map((r) =>
+          [
+            r.id,
+            r.name,
+            r.email,
+            r.sponsor,
+            r.sponsor_email,
+            r.past_rank,
+            r.new_rank,
+          ].join(','),
+        ),
+      ].join('\n');
   }
 }

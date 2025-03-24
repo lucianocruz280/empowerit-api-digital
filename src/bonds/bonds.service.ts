@@ -26,6 +26,35 @@ export async function availableCap(registerUserId: string, cash: number) {
 export class BondsService {
   constructor(private readonly userService: UsersService) { }
 
+  async addBond(
+    user_id: string, // usuario que recibe el bono
+    type: Bonds,
+    amount: number,
+    user_origin_bond?: string, // usuario que detono el bono
+  ) {
+    const isActive = await this.userService.isActiveUser(user_id);
+
+    if (isActive) {
+      await admin
+        .collection('users')
+        .doc(user_id)
+        .update({
+          [type]: firestore.FieldValue.increment(amount),
+          profits: firestore.FieldValue.increment(amount),
+          //balance: firestore.FieldValue.increment(amount),
+          [`pending_${type}`]: firestore.FieldValue.increment(amount),
+        });
+      await this.addProfitDetail(user_id, type, amount, user_origin_bond);
+    } else {
+      await this.addLostProfit(user_id, type, amount, user_origin_bond);
+    }
+  }
+
+  async execUserBinaryBond(registerUserId: string, amount: number) {
+    await this.addBond(registerUserId, Bonds.BINARY, amount, null);
+  }
+
+
   /**
    * solo se reparte este bono a los usuarios activos
    */

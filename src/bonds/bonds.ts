@@ -7,7 +7,8 @@ export enum Bonds {
   MENTOR = 'bond_mentor',
   CAR = 'bond_car',
   DIRECT_SALE = 'bond_direct_sale',
-  INVESTMENT = 'bond_investment'
+  INVESTMENT = 'bond_investment',
+  BINARY = 'bond_binary'
 }
 
 /**
@@ -77,6 +78,7 @@ export const menthor_percent_by_Franchise: Record<Franchises, number> = {
 export const BOND_CAR = 250;
 
 export const messages: Record<Bonds, string> = {
+  bond_binary: 'Bono Binario',
   bond_quick_start: 'Bono de inicio rápido',
   bond_mentor: 'Bono Mentor',
   bond_car: 'Bono Auto',
