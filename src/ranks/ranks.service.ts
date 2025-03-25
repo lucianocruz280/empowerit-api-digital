@@ -414,7 +414,7 @@ export class RanksService {
   async getRankUser(userId: string): Promise<any> {
     const start = dayjs().add(-1, 'day').utcOffset(-6).startOf('month');
     const end = dayjs().add(-1, 'day').utcOffset(-6).endOf('month');
-
+    let binary_percent = 0.1
     /* Obtener la suma de puntos del ultimo mes */
     const points = await this.getPoints(userId, start, end);
     console.log("points", userId, points)
@@ -422,12 +422,14 @@ export class RanksService {
     const smaller_leg = points.right > points.left ? 'left' : 'right';
     const points_smaller_leg = points[smaller_leg];
     const rank = await this.getRank(userId, points_smaller_leg);
+    if(rank.rank == Ranks.NONE) binary_percent = 0.07
     console.log("el rango es en getRankUser", rank)
     return {
       order: rank.order,
       rank: rank.rank,
       left_points: points.left,
       right_points: points.right,
+      binary_percent
     };
   }
 
