@@ -155,6 +155,7 @@ export class AdminService {
           bond_quick_start: 0,
           bond_investment: 0,
         });
+      await this.binaryService.matchBinaryPoints(doc.id)
     }
 
     /** TODO: sendRequestTransaction */
