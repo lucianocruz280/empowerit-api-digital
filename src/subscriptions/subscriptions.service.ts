@@ -1400,6 +1400,9 @@ export class SubscriptionsService {
     });
     console.log('despues de la funcion addQueueBinaryPosition');
 
+    await this.addQueueBinaryPay()
+    console.log("despues de mandar el task para pagar binario")
+
     const userRef = await admin.collection('users').doc(id_user).get();
     const userEmail = await userRef.get('email');
     const userName = await userRef.get('name');
