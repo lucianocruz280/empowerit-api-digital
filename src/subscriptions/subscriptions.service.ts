@@ -27,6 +27,7 @@ import { alivePack, businessPack, freedomPack } from './products_packs';
 import { pack_points, pack_points_yearly } from '../binary/binary_packs';
 import Openpay from 'openpay';
 import { EmailService } from 'src/email/email.service';
+import { ranks_object } from 'src/ranks/ranks_object';
 
 export const PARTICIPATIONS_PRICES: Record<PackParticipations, number> = {
   '3000-participation': 3000,
@@ -1469,6 +1470,23 @@ export class SubscriptionsService {
       this.googleTaskService.getPathQueue('assign-binary-position'),
     );
   }
+  async addQueueBinaryPay() {
+    type Method = 'POST';
+    const task: google.cloud.tasks.v2.ITask = {
+      httpRequest: {
+        httpMethod: 'POST' as Method,
+        url: `${process.env.API_URL}/bonds/pay-binary`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    };
+
+    await this.googleTaskService.addToQueue(
+      task,
+      this.googleTaskService.getPathQueue('binary-pay'),
+    );
+  }
 
   async addQueueBinaryPositionForAutomaticFranchises(
     body: PayloadAssignBinaryPositionForAutomaticFranchises,
@@ -1704,6 +1722,9 @@ export class SubscriptionsService {
         console.error(err);
       }
     }
+
+
+    
   }
 
   async assignBinaryPositionForAutomaticFranchises(

@@ -22,6 +22,10 @@ export async function availableCap(registerUserId: string, cash: number) {
   return membership_cap_limit - membership_cap_current;
 }
 
+const round2 = (amount) => {
+  return Math.round(amount * 100) / 100;
+};
+
 @Injectable()
 export class BondsService {
   constructor(private readonly userService: UsersService) { }
@@ -30,28 +34,131 @@ export class BondsService {
     user_id: string, // usuario que recibe el bono
     type: Bonds,
     amount: number,
+    add_to_balance = true,
     user_origin_bond?: string, // usuario que detono el bono
   ) {
-    const isActive = await this.userService.isActiveUser(user_id);
+    const active_limit = await this.getNextCap(user_id);
 
-    if (isActive) {
-      await admin
-        .collection('users')
-        .doc(user_id)
-        .update({
-          [type]: firestore.FieldValue.increment(amount),
-          profits: firestore.FieldValue.increment(amount),
-          //balance: firestore.FieldValue.increment(amount),
-          [`pending_${type}`]: firestore.FieldValue.increment(amount),
-        });
-      await this.addProfitDetail(user_id, type, amount, user_origin_bond);
+    if (active_limit) {
+      const {
+        id: membership_id,
+        membership_cap_limit,
+        membership_cap_current,
+      } = active_limit;
+
+      const real = this.getRemaing(
+        amount,
+        membership_cap_limit,
+        membership_cap_current,
+      );
+
+      const batch = admin.batch();
+
+      const update: any = {
+        profits: firestore.FieldValue.increment(real),
+        [type]: firestore.FieldValue.increment(real),
+      };
+
+      if (add_to_balance) {
+        update.balance = firestore.FieldValue.increment(real);
+      }
+
+      await this.addProfitDetail(
+        user_id,
+        type,
+        real,
+        user_origin_bond,
+      );
+
+      batch.update(admin.collection('users').doc(user_id), update);
+
+      const new_status =
+        membership_cap_current + real >= membership_cap_limit
+          ? 'expired'
+          : 'paid';
+
+      batch.update(
+        admin
+          .collection('users')
+          .doc(user_id)
+          .collection('memberships')
+          .doc(membership_id),
+        {
+          membership_cap_current: firestore.FieldValue.increment(real),
+          membership_status: new_status,
+        },
+      );
+
+      await batch.commit();
+
+      if (real < amount) {
+        return this.addBond(
+          user_id,
+          type,
+          amount - real,
+          true,
+          user_origin_bond,
+        );
+      }
     } else {
       await this.addLostProfit(user_id, type, amount, user_origin_bond);
     }
   }
 
+  async execBinaryBond(userId: string, smart_leg_points: number) {
+    console.log('execBinaryBond', { userId });
+    const userRef = admin.collection('users').doc(userId);
+    const user = await userRef.get();
+    const percent = 0.1;
+
+    // primer nivel
+    if (user.exists) {
+      const amount = round2(smart_leg_points * percent);
+
+      await this.execUserBinaryBond(userId, amount);
+    }
+  }
+
+  async payPoints() {
+    const users = await admin
+      .collection('users')
+      .where('membership', '!=', null)
+      .get();
+
+    for (const u of users.docs) {
+      try {
+        const small_leg =
+          u.get('left_points') > u.get('right_points') ? 'right' : 'left';
+        const points = u.get(`${small_leg}_points`);
+
+        if (points > 0) {
+          await this.execBinaryBond(u.id, points);
+        }
+      } catch (err) {
+        console.error('error binary', u.id, err);
+      }
+    }
+  }
+
   async execUserBinaryBond(registerUserId: string, amount: number) {
     await this.addBond(registerUserId, Bonds.BINARY, amount, null);
+  }
+
+  async getNextCap(user_id: string): Promise<null | {
+    membership_cap_limit: number;
+    membership_cap_current: number;
+    id: string;
+  }> {
+    return await admin
+      .collection('users')
+      .doc(user_id)
+      .get().then((d) => ({id:d.data().membership, ...d.data()} as any))
+  }
+
+  getRemaing(amount: number, cap_limit: number, cap_current: number) {
+    const remaing = cap_limit - cap_current;
+    const real = remaing > amount ? amount : remaing;
+    return real;
   }
 
 
@@ -390,3 +497,5 @@ export class BondsService {
     };
   }
 }
+
+

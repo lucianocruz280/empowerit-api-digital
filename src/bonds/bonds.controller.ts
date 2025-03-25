@@ -15,6 +15,11 @@ export class BondsController {
     );
   }
 
+  @Post('pay-binary')
+  async payBinary() {
+    return this.bondsService.payPoints()
+  }
+
   @Post('pay-presenter')
   async payPresenter(@Body() body) {
     if (!body.registerUserId) throw new Error('registerUserId is required');
