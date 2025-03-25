@@ -82,22 +82,22 @@ export class BinaryService {
     let user = await admin.collection('users').doc(registerUserId).get();
 
     do {
+      if (!user.get('parent_binary_user_id')) break;
+
       user = await admin
         .collection('users')
         .doc(user.get('parent_binary_user_id'))
         .get();
+
       if (user.exists) {
         const side =
           user.get('left_binary_user_id') == currentUser ? 'left' : 'right';
-        currentUser = user.id;
-        console.log(currentUser);
-        const countUnderlinePeople = user.get('count_underline_people');
 
+        currentUser = user.id;
 
         batch.update(user.ref, {
           count_underline_people: firestore.FieldValue.increment(1),
         });
-
 
         batch.set(
           admin
@@ -110,17 +110,11 @@ export class BinaryService {
             created_at: new Date(),
           },
         );
-        if (
-          currentUser === '9CXMbcJt2sNWG40zqWwQSxH8iki2' ||
-          currentUser === 'corpotop@gmail.com'
-        )
-          currentUser = null;
       } else {
         currentUser = null;
       }
     } while (currentUser);
 
-    console.log(3);
     // Commit the batch
     await batch.commit();
   }

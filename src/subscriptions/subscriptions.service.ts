@@ -1695,51 +1695,13 @@ export class SubscriptionsService {
      */
     if (volumen) {
       try {
-        /* Aqui */
-        const is_new_pack = [
-          '49-pack',
-          '100-pack',
-          '300-pack',
-          '500-pack',
-          '1000-pack',
-          '2000-pack',
-          '3000-pack',
-          'FP200',
-          'FP300',
-          'FP500',
-          'FD200',
-          'FD300',
-          'FD500',
-        ].includes(user.get('membership'));
-        let points = 0;
-        if (is_new_pack) {
-          if (payload.is_new) {
-            points = pack_points[user.get('membership')];
-          } else {
-            points = pack_points[user.get('membership')] / 2;
-          }
-          console.log('points =>', points);
-        } else {
-          const membership_period = user.get('membership_period');
-          points =
-            membership_period == 'yearly'
-              ? pack_points_yearly[user.get('membership')]
-              : pack_points[user.get('membership')];
-        }
+        const points = pack_points[user.get('membership')];
         console.log('increaseBinaryPoints', user.id, points);
-        if (user.get('membership') != '49-pack') {
-          await this.binaryService.increaseBinaryPoints(user.id, points);
-        }
-        console.log('todo bien');
+        await this.binaryService.increaseBinaryPoints(user.id, points);
         return 'Puntos incrementados exitosamente';
       } catch (err) {
         console.log('Error increaseBinaryPoints');
         console.error(err);
-        /*Sentry.configureScope((scope) => {
-          scope.setExtra('id_user', user.id);
-          scope.setExtra('message', 'no se repartio el bono binario');
-          Sentry.captureException(err);
-        });*/
       }
     }
   }
