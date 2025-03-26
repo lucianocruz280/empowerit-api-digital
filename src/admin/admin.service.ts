@@ -10,6 +10,7 @@ import {
   getMentorPercentByRank,
 } from '../bonds/bonds';
 import { firestore } from 'firebase-admin';
+import { RanksService } from 'src/ranks/ranks.service';
 
 export const ADMIN_BINARY_PERCENT = 15 / 100;
 const ADMIN_QUICK_START = 30 / 100;
@@ -32,26 +33,33 @@ export class AdminService {
   constructor(
     private readonly cryptoapisService: CryptoapisService,
     private readonly binaryService: BinaryService,
+    private readonly rankService: RanksService
   ) { }
+
+  getBinaryPercentByRank(user_id: string) {
+    return this.rankService.getRankUser(user_id).then((data) => {
+      const isAdmin = ADMIN_USERS.includes(user_id);
+      return isAdmin ? ADMIN_BINARY_PERCENT : data.binary_percent as number;
+    });
+  }
 
   async getPayroll() {
     const users = await db.collection('users').get();
     const docs = users.docs.map((r) => ({ id: r.id, ...r.data() }));
-    let binary_percent = 0;
-    const payroll_data = docs
-      .map((docData: any) => {
-        // agregar matching bonus
+
+    const payroll_data = await Promise.all(
+      docs.map(async (docData: any) => {
         const hasInfinitePoints = INFINITE_POINTS.includes(docData.id);
         const binary_side = hasInfinitePoints
           ? 'right'
           : docData.left_points > docData.right_points
             ? 'right'
             : 'left';
+
         const binary_points = docData[`${binary_side}_points`];
-        console.log("los puntos son", binary_points)
-        binary_percent = getBinaryPercent(docData.id, docData.membership);
-        console.log("el porcentaje es", binary_percent)
-        const res = {
+        const binary_percent = await this.getBinaryPercentByRank(docData.id);
+
+        const res: ResPayroll = {
           id: docData.id,
           name: docData.name,
           bond_direct: docData.bond_quick_start || 0,
@@ -69,18 +77,19 @@ export class AdminService {
           rank: docData.rank || 'none',
         };
 
-        return res;
-      })
-      .map((doc) => ({
-        ...doc,
-        total: doc.bond_direct + doc.bond_investment,
-      }))
+        return {
+          ...res,
+          total: res.bond_direct + res.bond_investment,
+        };
+      }),
+    );
+
+    const filtered_sorted = payroll_data
       .filter((doc) => doc.total > 0)
-      // sort desc
       .sort((a, b) => b.total - a.total);
 
     const payroll_data_2 = await Promise.all(
-      payroll_data.map(async (doc) => ({
+      filtered_sorted.map(async (doc) => ({
         ...doc,
         crypto_amount: doc.total,
       })),
@@ -88,6 +97,7 @@ export class AdminService {
 
     return payroll_data_2;
   }
+
 
   async payrollCapCurrent(payroll_data: any[]) {
     /**
@@ -131,13 +141,16 @@ export class AdminService {
       .filter((doc) => doc.total >= 40)
       .filter((doc) => Boolean(doc.wallet_usdt));
 
+      const clean_payroll_data_sin_investment = clean_payroll_data.map(({ bond_investment, ...rest }) => rest);
+
+
     const ref = await db.collection('payroll').add({
       ...clean_payroll_data,
-      total_usd: clean_payroll_data.reduce((a, b) => a + b.total, 0),
+      total_usd: clean_payroll_data_sin_investment.reduce((a, b) => a + b.total, 0),
       created_at: new Date(),
     });
     await Promise.all(
-      clean_payroll_data.map(async (doc) => {
+      clean_payroll_data_sin_investment.map(async (doc) => {
         await ref.collection('details').add(doc);
         await db.collection(`users/${doc.id}/payroll`).add({
           ...doc,
@@ -146,7 +159,7 @@ export class AdminService {
       }),
     );
 
-    for (const doc of clean_payroll_data) {
+    for (const doc of clean_payroll_data_sin_investment) {
       await db
         .collection('users')
         .doc(doc.id)

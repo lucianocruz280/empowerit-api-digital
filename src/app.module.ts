@@ -41,6 +41,7 @@ import { SubscriptionsService } from './subscriptions/subscriptions.service';
 import { CryptoapisService } from './cryptoapis/cryptoapis.service';
 import { ShopifyService } from './shopify/shopify.service';
 import { EmailService } from './email/email.service';
+import { AdminService } from './admin/admin.service';
 
 @Module({
   imports: [

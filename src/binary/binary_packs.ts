@@ -69,3 +69,5 @@ export const getBinaryPercent = (user_id: string, membership: string) => {
     : pack_binary[membership];
   return binary_percent;
 };
+
+

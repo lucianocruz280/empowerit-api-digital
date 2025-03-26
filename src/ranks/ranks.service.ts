@@ -15,7 +15,7 @@ type UserRank = {
 
 @Injectable()
 export class RanksService {
-  constructor(private readonly googleTaskService: GoogletaskService, private readonly bondService: BondsService) { }
+  constructor(private readonly googleTaskService: GoogletaskService) { }
 
   async updateNewRanks() {
     try {
