@@ -24,7 +24,7 @@ type MembershipsProductsNames = 'FP200' | 'FP300' | 'FP500';
 
 type DigitalFranchises = 'FD150' | 'FD200' | 'FD300' | 'FD500';
 
-type Coins = 'BTC' | 'LTC' | 'MXN';
+type Coins = 'BTC' | 'LTC' | 'MXN' | 'USDT';
 
 type Franchises =
   | '49-pack'

@@ -86,6 +86,11 @@ export class SubscriptionsController {
   ) {
     try {
       console.log(type);
+      return await this.subscriptionService.createDisruptivePayment(
+        body.userId,
+        type,
+        body.coin
+      )
       return await this.subscriptionService.createPaymentAddress(
         body.userId,
         type,

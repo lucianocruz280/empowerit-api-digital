@@ -28,6 +28,9 @@ import { pack_points, pack_points_yearly } from '../binary/binary_packs';
 import Openpay from 'openpay';
 import { EmailService } from 'src/email/email.service';
 import { ranks_object } from 'src/ranks/ranks_object';
+import { HttpModule, HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
 
 export const PARTICIPATIONS_PRICES: Record<PackParticipations, number> = {
   '3000-participation': 3000,
@@ -239,6 +242,14 @@ const isExpired = (expires_at: { seconds: number } | null) => {
   return !is_active;
 };
 
+const disruptiveUrl = axios.create({
+  baseURL: 'https://my.disruptivepayments.io/api/payments/single',
+  headers: {
+    'Content-Type': 'application/json',
+    'client-api-key': 'qwyijs74vsjug5hn50nlfmcbzqic1l1743038848523',
+  },
+});
+
 @Injectable()
 export class SubscriptionsService {
   constructor(
@@ -316,8 +327,8 @@ export class SubscriptionsService {
       // );
     }
     if (currency == 'MXN') {
-      exchange = await this.cryptoapisService.getUSDExchange();
-      amount = Number(Number(exchange * CREDITS_PACKS_PRICE[type]).toFixed(2));
+      // exchange = await this.cryptoapisService.getUSDExchange();
+      // amount = Number(Number(exchange * CREDITS_PACKS_PRICE[type]).toFixed(2));
 
       const customer = {
         name: userData.name,
@@ -397,46 +408,46 @@ export class SubscriptionsService {
       referenceId = userData.payment_link_participations[type].referenceId;
     } else {
       // Obtener un nuevo wallet para el pago
-      const newAddress = await this.cryptoapisService.createNewWalletAddress(
-        currency,
-      );
-      address = newAddress;
+      // const newAddress = await this.cryptoapisService.createNewWalletAddress(
+      //   currency,
+      // );
+      // address = newAddress;
 
-      console.log('address:', newAddress);
+      // console.log('address:', newAddress);
 
       // Crear primera confirmación de la transaccion
 
       if (currency == 'LTC') {
         try {
-          const resConfirmation =
-            await this.cryptoapisService.createFirstConfirmationTransaction(
-              id_user,
-              newAddress,
-              type,
-              currency,
-              'callbackPaymentForParticipations',
-            );
-          referenceId = resConfirmation.data.item.referenceId;
+          // const resConfirmation =
+          //   await this.cryptoapisService.createFirstConfirmationTransaction(
+          //     id_user,
+          //     newAddress,
+          //     type,
+          //     currency,
+          //     'callbackPaymentForParticipations',
+          //   );
+          // referenceId = resConfirmation.data.item.referenceId;
         } catch (err) {
           console.error(err);
         }
 
         try {
-          const resConfirmation2 =
-            await this.cryptoapisService.createCallbackConfirmation(
-              id_user,
-              newAddress,
-              type,
-              currency,
-              'callbackPaymentForParticipations',
-            );
-          referenceId2 = resConfirmation2.data.item.referenceId;
+          const resConfirmation2 = ''
+          //   await this.cryptoapisService.createCallbackConfirmation(
+          //     id_user,
+          //     newAddress,
+          //     type,
+          //     currency,
+          //     'callbackPaymentForParticipations',
+          //   );
+          // referenceId2 = resConfirmation2.data.item.referenceId;
         } catch (err) {
           console.error(err);
         }
       } else if (currency == 'MXN') {
       }
-      const qr_name = this.cryptoapisService.getQRNameFromCurrency(currency);
+      // const qr_name = this.cryptoapisService.getQRNameFromCurrency(currency);
     }
 
     const amount_type = PARTICIPATIONS_PRICES;
@@ -447,10 +458,10 @@ export class SubscriptionsService {
     let openpay = {};
 
     if (currency == 'LTC') {
-      amount = await this.cryptoapisService.getLTCExchange(amount_type[type]);
+      // amount = await this.cryptoapisService.getLTCExchange(amount_type[type]);
     }
     if (currency == 'MXN') {
-      exchange = await this.cryptoapisService.getUSDExchange();
+      // exchange = await this.cryptoapisService.getUSDExchange();
       amount = Number(Number(exchange * amount_type[type]).toFixed(2));
 
       const customer = {
@@ -478,14 +489,14 @@ export class SubscriptionsService {
       openpay = res;
     }
 
-    const qr_name = this.cryptoapisService.getQRNameFromCurrency(currency);
+    // const qr_name = this.cryptoapisService.getQRNameFromCurrency(currency);
 
     // Estructurar el campo payment_link
     const payment_link = {
       referenceId,
       referenceId2,
       address,
-      qr: `https://api.qrserver.com/v1/create-qr-code/?size=225x225&data=${qr_name}:${address}?amount=${amount}`,
+      qr: `https://api.qrserver.com/v1/create-qr-code/?size=225x225&data=${''}:${address}?amount=${amount}`,
       status: 'pending',
       created_at: new Date(),
       amount,
@@ -618,7 +629,7 @@ export class SubscriptionsService {
       openpay = res;
     }
 
-    const qr_name = this.cryptoapisService.getQRNameFromCurrency(currency);
+    // const qr_name = this.cryptoapisService.getQRNameFromCurrency(currency);
 
     // Estructurar el campo payment_link_automatic_franchises
     const payment_link_automatic_franchises = {
@@ -1316,7 +1327,7 @@ export class SubscriptionsService {
 
     await this.addDigitalService(id_user, type)
 
-  
+
 
     if (isNew) {
       await userDocRef.update({
@@ -1431,6 +1442,61 @@ export class SubscriptionsService {
     console.log('despues de mandar el email si es un usuario nuevo');
   }
 
+
+
+  async generateDisruptivePayment(amount: number) {
+    const url = 'https://my.disruptivepayments.io/api/payments/single';
+
+    const body = {
+      network: 'POLYGON',
+      fundsGoal: amount,
+      smartContractAddress: '',
+    };
+    try {
+      const response = await disruptiveUrl.post(url, body)
+
+      return response.data
+    } catch (error) {
+      console.error("Fallo al obtener el address", error)
+    }
+  }
+
+  async updateStatusFirebase(userId: string, qrcode_url: string, type: Memberships, address: string, fundsGoal: number) {
+    const docRef = admin.collection('users').doc(userId)
+    await docRef.update({
+      payment_link: {
+        [type]: {
+          address,
+          amount: fundsGoal,
+          membership: type,
+          qrcode_url,
+          created_at: new Date(),
+          status: "pending",
+          uid: userId
+        }
+      }
+    })
+  }
+
+  async createDisruptivePayment(userId: string, type: Memberships, coin: Coins) {
+    const qr_name = 'pol'
+
+    const amount = MEMBERSHIP_PRICES_MONTHLY[type]
+    const response = await this.generateDisruptivePayment(amount)
+    const { address, fundsGoal } = response.data
+
+    const qr_codeurl = `https://api.qrserver.com/v1/create-qr-code/?size=225x225&data=${qr_name}:${address}?amount=${fundsGoal}`
+    await this.updateStatusFirebase(
+      userId,
+      qr_codeurl,
+      type,
+      address,
+      fundsGoal
+    )
+    console.log("el response es", response)
+
+  }
+
   async addDigitalService(id: string, type: Memberships) {
     if (type === 'FD150' || type === 'FD300' || type === 'FD500') {
       let newMrMoneyPowerDate: Date;
@@ -1514,7 +1580,7 @@ export class SubscriptionsService {
     );
   }
 
-  async execInvestmentBond (id_user:string, type: Memberships) {
+  async execInvestmentBond(id_user: string, type: Memberships) {
     const value_investment = (MEMBERSHIP_PRICES_MONTHLY[type] * 15) / 100
     await admin.collection('users').doc(id_user).set({
       bond_investment: firestore.FieldValue.increment(value_investment || 45)
@@ -1551,13 +1617,13 @@ export class SubscriptionsService {
           merge: true,
         },
       );
-      console.log("paso el set");
+    console.log("paso el set");
     //Busca en todos los usuarios los que tengan el sponsor_id en la subcoleecion de sanguine_users
     const sanguine_sponsors = await admin
       .collectionGroup('sanguine_users')
       .where('id_user', '==', current_user.sponsor_id)
       .get();
-      console.log("condicion");
+    console.log("condicion");
     for (const sponsorSanguineRef of sanguine_sponsors.docs) {
       console.log("dentro del for", sponsorSanguineRef);
       const userId = sponsorSanguineRef.ref.parent.parent.id;
@@ -1727,7 +1793,7 @@ export class SubscriptionsService {
     }
 
 
-    
+
   }
 
   async assignBinaryPositionForAutomaticFranchises(
