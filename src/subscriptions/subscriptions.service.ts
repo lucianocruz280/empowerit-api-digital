@@ -1463,6 +1463,7 @@ export class SubscriptionsService {
 
   async updateStatusFirebase(userId: string, qrcode_url: string, type: Memberships, address: string, fundsGoal: number) {
     const docRef = admin.collection('users').doc(userId)
+    const now = new Date();
     await docRef.update({
       payment_link: {
         [type]: {
@@ -1472,7 +1473,8 @@ export class SubscriptionsService {
           qrcode_url,
           created_at: new Date(),
           status: "pending",
-          uid: userId
+          uid: userId,
+          expires_at: new Date(now.getTime() + 60 * 60 * 1000)
         }
       }
     })
