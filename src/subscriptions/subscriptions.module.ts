@@ -8,6 +8,7 @@ import { CryptoapisService } from 'src/cryptoapis/cryptoapis.service';
 import { GoogletaskService } from 'src/googletask/googletask.service';
 import { ShopifyService } from 'src/shopify/shopify.service';
 import { EmailService } from 'src/email/email.service';
+import { CoinpaymentsService } from 'src/coinpayments/coinpayments.service';
 
 @Module({
   providers: [
@@ -19,6 +20,7 @@ import { EmailService } from 'src/email/email.service';
     GoogletaskService,
     ShopifyService,
     EmailService,
+    CoinpaymentsService
   ],
   controllers: [SubscriptionsController],
   imports: [],

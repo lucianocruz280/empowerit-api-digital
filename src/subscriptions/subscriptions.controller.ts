@@ -1,12 +1,14 @@
 import { Controller, Get, Query, Body, Post, Param } from '@nestjs/common';
-import { MEMBERSHIP_CAP, SubscriptionsService } from './subscriptions.service';
+import { MEMBERSHIP_CAP, MEMBERSHIP_PRICES_MONTHLY, SubscriptionsService } from './subscriptions.service';
 import {
   PayloadAssignBinaryPosition,
   PayloadAssignBinaryPositionForAutomaticFranchises,
+  StatusDisruptive,
 } from './types';
 import { auth, db } from 'src/firebase/admin';
 import { firestore } from 'firebase-admin';
 import dayjs from 'dayjs';
+import { CoinpaymentsService } from 'src/coinpayments/coinpayments.service';
 
 const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,7 +16,10 @@ const sleep = (ms: number) => {
 
 @Controller('subscriptions')
 export class SubscriptionsController {
-  constructor(private readonly subscriptionService: SubscriptionsService) {}
+  constructor(
+    private readonly subscriptionService: SubscriptionsService,
+    private readonly coinPaymentsService: CoinpaymentsService
+  ) { }
 
   @Get('isActiveUser')
   isActiveUser(@Query('idUser') idUser: string) {
@@ -103,6 +108,36 @@ export class SubscriptionsController {
     }
   }
 
+  @Post('getStatus/:status')
+  async getStatus(
+    @Param('status') status: StatusDisruptive,
+    @Body() body
+  ) {
+    try {
+      console.log("stat", body, status)
+      if (status == 'COMPLETED') {
+        const user = await this.coinPaymentsService.getUser(body.email);
+        const franchiseNormalKeys = user?.payment_link ? Object.keys(user?.payment_link) : []
+        const franchiseKey = franchiseNormalKeys[0]
+        const membership = user.payment_link[franchiseKey]?.membership
+        if (membership && membership in MEMBERSHIP_PRICES_MONTHLY) {
+          console.log("se ejecuta la normal", status)
+          await this.subscriptionService.onPaymentMembership(
+            user.id,
+            membership,
+            'USDT',
+            'Activacion con Pago',
+          );
+        } else {
+          console.error('Membresía no válida o no encontrada en MEMBERSHIP_PRICES_MONTHLY.');
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      throw new Error(err);
+    }
+  }
+
   @Post('assignBinaryPosition')
   async assignBinaryPosition(
     @Body()
@@ -178,7 +213,7 @@ export class SubscriptionsController {
       .update({
         count_direct_people: firestore.FieldValue.increment(1),
       });
-      console.log("paso increment");
+    console.log("paso increment");
     const res = await db
       .collection('users')
       .where('email', '==', body.email)
