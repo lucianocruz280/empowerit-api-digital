@@ -417,13 +417,11 @@ export class RanksService {
     let binary_percent = 0.1
     /* Obtener la suma de puntos del ultimo mes */
     const points = await this.getPoints(userId, start, end);
-    console.log("points", userId, points)
     /* Crear subcoleccion para el historial de rangos */
     const smaller_leg = points.right > points.left ? 'left' : 'right';
     const points_smaller_leg = points[smaller_leg];
     const rank = await this.getRank(userId, points_smaller_leg);
     if(rank.rank == Ranks.NONE) binary_percent = 0.07
-    console.log("el rango es en getRankUser", rank)
     return {
       order: rank.order,
       rank: rank.rank,
@@ -475,7 +473,6 @@ export class RanksService {
     let rank: Ranks = Ranks.NONE;
     let next_rank: Ranks = Ranks.NONE;
     let missing_points = 0;
-    console.log("puntos pierna mas corta", points_smaller_leg)
     const hasRankBothSides = async (rank: Ranks): Promise<boolean> => {
       return (
         (await this.getUserRankBySide(userId, rank, 'left')) &&

@@ -90,7 +90,6 @@ export class SubscriptionsController {
     @Param('type') type: Memberships,
   ) {
     try {
-      console.log(type);
       return await this.subscriptionService.createDisruptivePayment(
         body.userId,
         type,
@@ -114,14 +113,12 @@ export class SubscriptionsController {
     @Body() body
   ) {
     try {
-      console.log("stat", body, status)
       if (status == 'COMPLETED') {
         const user = await this.coinPaymentsService.getUser(body.email);
         const franchiseNormalKeys = user?.payment_link ? Object.keys(user?.payment_link) : []
         const franchiseKey = franchiseNormalKeys[0]
         const membership = user.payment_link[franchiseKey]?.membership
         if (membership && membership in MEMBERSHIP_PRICES_MONTHLY) {
-          console.log("se ejecuta la normal", status)
           await this.subscriptionService.onPaymentMembership(
             user.id,
             membership,
