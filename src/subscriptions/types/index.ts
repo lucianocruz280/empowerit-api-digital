@@ -14,10 +14,11 @@ export interface PayloadAssignBinaryPositionForAutomaticFranchises {
   range_points: number;
 }
 
-export type StatusDisruptive = 'WAITING' | 'CONFIRMING' | 'COMPLETED'
+export type StatusDisruptive = 'WAITING' | 'WARNING' | 'COMPLETED' | 'FAILED'
 
 export const recordStatusDisruptive: Record<StatusDisruptive, string> = {
   'WAITING': 'pending',
-  'CONFIRMING': 'confirming',
-  'COMPLETED': 'paid'
+  'WARNING': 'warnin',
+  'COMPLETED': 'paid',
+  "FAILED": 'cancelled'
 }
