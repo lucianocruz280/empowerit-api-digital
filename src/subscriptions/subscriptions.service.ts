@@ -1442,15 +1442,13 @@ export class SubscriptionsService {
     console.log('despues de mandar el email si es un usuario nuevo');
   }
 
-
-
   async generateDisruptivePayment(amount: number) {
     const url = 'https://my.disruptivepayments.io/api/payments/single';
 
     const body = {
       network: 'POLYGON',
       fundsGoal: amount,
-      smartContractAddress: '',
+      smartContractAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     };
     try {
       const response = await disruptiveUrl.post(url, body)
