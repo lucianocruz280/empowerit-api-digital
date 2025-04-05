@@ -81,10 +81,10 @@ export const MEMBERSHIP_PRICES_MONTHLY: Record<
   FP200: 200,
   FP300: 300,
   FP500: 500,
-  FD150: 15,
-  FD200: 15,
-  FD300: 15,
-  FD500: 15,
+  FD150: 150,
+  FD200: 200,
+  FD300: 300,
+  FD500: 500,
 };
 
 export const FRANCHISES_AUTOMATIC_CAPITALS: Record<
