@@ -46,7 +46,7 @@ export class EmailService {
                     <table border="0" cellspacing="0" cellpadding="0" width="100%">
                     <tr><td align="center" valign="middle" height="107" style="height: 107px;">
                       <div>
-                        <a href="#" target="_blank" style="font-family: Arial, sans-serif; font-size: 14px; color: #000000;"><img src="https://backoffice.empowerittop.com/img/email/i-1303443312.png" width="598" height="107" alt="" border="0" style="display: block; border-radius: 10px;"></a>
+                        <a href="#" target="_blank" style="font-family: Arial, sans-serif; font-size: 14px; color: #000000;"><img src="https://firebasestorage.googleapis.com/v0/b/empowerit-top-digital.firebasestorage.app/o/banner-horizontal-web-now.jpg?alt=media&token=b8ed87a6-0f7d-4321-9d73-ba8a0f021773" width="598" height="107" alt="" border="0" style="display: block; border-radius: 10px;"></a>
                       </div>
                     </td></tr>
                     </table>
@@ -99,15 +99,7 @@ export class EmailService {
                             <div>
                               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                               <tr><td align="center" valign="middle" style="font-size: 0px;">
-                                <div style="display: inline-block; vertical-align: middle; width: 100%; max-width: 300px;">
-                                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
-                                  <tr><td align="undefined" valign="top" class="outf14" style="font-size: large;">
-                                    <div>
-                                      <a href="#" target="_blank" style="font-family: Arial, sans-serif; font-size: 14px; color: #000000;"><img src="https://firebasestorage.googleapis.com/v0/b/empowerit-top-digital.firebasestorage.app/o/now-logo-3.png?alt=media&token=f31b960b-8a82-4a43-a51d-374fffca55d1" width="300" alt="" border="0" style="display: block; border-radius: 0px; max-width: 300px; width: 100%;" class="w300px"></a>
-                                    </div>
-                                  </td></tr>
-                                  </table>
-                                </div>
+                               
                                 <!--[if (gte mso 9)|(IE)]>
                                 </td>
                                 <td valign="middle" width="300" style="width: 300px">

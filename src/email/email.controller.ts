@@ -7,6 +7,6 @@ export class EmailController {
 
   @Get('test')
   test() {
-    return this.emailService.sendEmailNewUser('9CXMbcJt2sNWG40zqWwQSxH8iki2');
+    return this.emailService.sendEmailNewUser('lldYmGRap7dHegF9eFHv');
   }
 }
