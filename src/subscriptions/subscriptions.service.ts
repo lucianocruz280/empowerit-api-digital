@@ -1472,7 +1472,7 @@ export class SubscriptionsService {
           created_at: new Date(),
           status: "pending",
           uid: userId,
-          expires_at: new Date(now.getTime() + 60 * 60 * 1000)
+          expires_at: new Date(now.getTime() + 30 * 60 * 1000)
         }
       }
     })
