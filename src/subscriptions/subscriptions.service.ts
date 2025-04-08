@@ -1485,7 +1485,7 @@ export class SubscriptionsService {
     const response = await this.generateDisruptivePayment(amount)
     const { address, fundsGoal } = response.data
 
-    const qr_codeurl = `https://api.qrserver.com/v1/create-qr-code/?size=225x225&data=${qr_name}:${address}?amount=${fundsGoal}`
+    const qr_codeurl = `https://api.qrserver.com/v1/create-qr-code/?size=225x225&data=${address}?amount=${fundsGoal}`
     await this.updateStatusFirebase(
       userId,
       qr_codeurl,
