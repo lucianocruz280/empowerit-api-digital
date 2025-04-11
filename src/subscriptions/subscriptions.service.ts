@@ -242,7 +242,7 @@ const isExpired = (expires_at: { seconds: number } | null) => {
   return !is_active;
 };
 
-const disruptiveUrl = axios.create({
+export const disruptiveUrl = axios.create({
   baseURL: 'https://my.disruptivepayments.io/api/payments/single',
   headers: {
     'Content-Type': 'application/json',

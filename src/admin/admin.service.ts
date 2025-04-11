@@ -11,6 +11,7 @@ import {
 } from '../bonds/bonds';
 import { firestore } from 'firebase-admin';
 import { RanksService } from 'src/ranks/ranks.service';
+import axios from 'axios';
 
 export const ADMIN_BINARY_PERCENT = 15 / 100;
 const ADMIN_QUICK_START = 30 / 100;
@@ -27,6 +28,14 @@ export const INFINITE_POINTS = [
   'sVarUBihvSZ7ahMUMgwaAbXcRs03',
   '9CXMbcJt2sNWG40zqWwQSxH8iki2',
 ];
+
+export const disruptiveUrl = axios.create({
+  baseURL: 'https://my.disruptivepayments.io/api/payments/single',
+  headers: {
+    'Content-Type': 'application/json',
+    'client-api-key': 'qwyijs74vsjug5hn50nlfmcbzqic1l1743038848523',
+  },
+});
 
 @Injectable()
 export class AdminService {
@@ -79,7 +88,7 @@ export class AdminService {
 
         return {
           ...res,
-          total: res.bond_direct + res.bond_investment,
+          total: res.bond_direct + res.bond_investment + res.bond_binary,
         };
       }),
     );
@@ -136,13 +145,31 @@ export class AdminService {
 
   async payroll() {
     const payroll_data = await this.getPayroll();
-
+    const url = 'https://my.disruptivepayments.io/api/payments/mass'
     const clean_payroll_data = payroll_data
       .filter((doc) => doc.total >= 40)
       .filter((doc) => Boolean(doc.wallet_usdt));
-
-      const clean_payroll_data_sin_investment = clean_payroll_data.map(({ bond_investment, ...rest }) => rest);
-
+    const body = {
+      network: 'POLYGON',
+      smartContractAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+      name: "Corte Mensual",
+      "smartContractGetBalance": "getBalance",
+      "smartContractSendCoin": "sendCoin",
+      "eventGetSymbol": "symbol",
+      "massPaymentType": 1,
+      "accounts": [
+        {
+          "address": "XXXXXXXXXXXXXXX",
+          "amount": 100
+        },
+        {
+          "address": "XXXXXXXXXXXXXXX",
+          "amount": 150
+        }
+      ]
+    }
+    const clean_payroll_data_sin_investment = clean_payroll_data.map(({ bond_investment, ...rest }) => rest);
+    await disruptiveUrl.post(url,)
 
     const ref = await db.collection('payroll').add({
       ...clean_payroll_data,
@@ -166,7 +193,7 @@ export class AdminService {
         .update({
           profits: doc.profits + doc.total,
           bond_quick_start: 0,
-         
+
         });
       await this.binaryService.matchBinaryPoints(doc.id)
     }
