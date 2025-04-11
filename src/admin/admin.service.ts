@@ -169,7 +169,7 @@ export class AdminService {
       ]
     }
     const clean_payroll_data_sin_investment = clean_payroll_data.map(({ bond_investment, ...rest }) => rest);
-    await disruptiveUrl.post(url,)
+    // await disruptiveUrl.post(url,)
 
     const ref = await db.collection('payroll').add({
       ...clean_payroll_data,
