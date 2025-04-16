@@ -1497,6 +1497,20 @@ export class SubscriptionsService {
 
   }
 
+  async validateWalletPol(wallet:string) {
+    try {
+      const url = 'https://my.disruptivepayments.io/api/payments/validate-address'
+      const body = {
+        network: "POLYGON",
+        address: wallet
+    }
+      const status = await disruptiveUrl.post(url, body)
+      return status.data?.data
+    } catch (error) {
+      console.error("fallo al validar la wallet", error)
+    }
+  }
+
   async addDigitalService(id: string, type: Memberships) {
     if (type === 'FD150' || type === 'FD300' || type === 'FD500') {
       let newMrMoneyPowerDate: Date;

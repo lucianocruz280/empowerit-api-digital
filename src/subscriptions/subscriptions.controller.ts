@@ -107,6 +107,13 @@ export class SubscriptionsController {
     }
   }
 
+  @Get('validate-wallet/:wallet')
+  async validateWallet(
+    @Param('wallet') wallet: string
+  ) {
+    return this.subscriptionService.validateWalletPol(wallet)
+  }
+
   @Post('getStatus/:status')
   async getStatus(
     @Param('status') status: StatusDisruptive,
